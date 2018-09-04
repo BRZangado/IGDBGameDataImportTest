@@ -3,34 +3,108 @@ import requests
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from testeRest.importdata.models import IGDBGame
-from testeRest.importdata.serializers import IGDBGameSerializer
+from testeRest.importdata.models import IGDBGame, Genre
+from testeRest.importdata.serializers import IGDBGameSerializer, IGDBGenreSerializer
 
-class IgDBView(APIView):
+
+class GenreView(APIView):
 
 	def get(self, request, format=None):
 
-		header = {'user-key': '9c3039ea4ad4cb83bfb126100764c483', 'Accept':'application/json'}
-		url = 'https://api-endpoint.igdb.com/games/?fields=id,name,hypes&filter[rating][gte]=60&order=popularity:desc&limit=50&offset=0'
+		header = {'user-key': '9c3039ea4ad4cb83bfb126100764c483',
+	                  'Accept': 'application/json'
+	        }
+		url = 'https://api-endpoint.igdb.com/genres/12?fields=name'
 		data = requests.get(url, headers=header)
 		ndata = data.json()
 
-		for item in ndata:
-
-			serializer = IGDBGameSerializer(data=item)
-
-			if serializer.is_valid():
-				print("deu certo")
-				serializer.save()
-			else:
-				print("deu errado")
-
-		for game in IGDBGame.objects.all():
-			print(game)
-
-		IGDBGame.objects.all().delete()
+		print(ndata[0]['name'])
 
 		return Response(data=ndata)
 
 
+class IgDBView(APIView):
 
+    '''
+            View that calls IGDB API
+            and return some relevant
+            information about a game
+            and filter for Null value
+    '''
+
+    def get(self, request, format=None):
+
+        header = {'user-key': '9c3039ea4ad4cb83bfb126100764c483',
+                  'Accept': 'application/json'}
+        url = 'https://api-endpoint.igdb.com/games/?fields=id,name,hypes,popularity,aggregated_rating,time_to_beat,genres&filter[rating][gte]=60&order=popularity:desc&limit=50&offset=0'
+        data = requests.get(url, headers=header)
+        ndata = data.json()
+
+        for item in ndata:
+
+            filtered_data = self.filter_data(item)
+            serializer = IGDBGameSerializer(data=filtered_data)
+
+            if serializer.is_valid():
+                print("deu certo")
+                serializer.save()
+            else:
+                print("deu errado")
+
+        for game in IGDBGame.objects.all():
+            print(game.id)
+            print(game.name)
+            print(game.hypes)
+            print(game.popularity)
+            print(game.aggregated_rating)
+            print(game.time_to_beat)
+
+        IGDBGame.objects.all().delete()
+
+        return Response(data=ndata)
+
+    def filter_data(self, game_dict):
+
+        if 'id' in game_dict:
+            id = game_dict['id']
+        else:
+            id = None
+
+        if 'name' in game_dict:
+            name = game_dict['name']
+        else:
+            name = None
+
+        if 'hypes' in game_dict:
+            hypes = game_dict['hypes']
+        else:
+            hypes = None
+
+        if 'popularity' in game_dict:
+            popularity = game_dict['popularity']
+        else:
+            popularity = None
+
+        if 'aggregated_rating' in game_dict:
+            aggregated_rating = game_dict['aggregated_rating']
+        else:
+            aggregated_rating = None
+
+        if 'time_to_beat' in game_dict:
+            if 'normally' in game_dict['time_to_beat']:
+                time_to_beat = game_dict['time_to_beat']['normally']
+            else:
+                time_to_beat = None
+        else:
+            time_to_beat = None
+
+        filtered_data = {
+            'id': id,
+            'name': name,
+            'hypes': hypes,
+            'popularity': popularity,
+            'aggregated_rating': aggregated_rating,
+            'time_to_beat': time_to_beat
+        }
+
+        return filtered_data

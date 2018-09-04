@@ -1,4 +1,21 @@
+
 from django.db import models
+
+class Genre(models.Model):
+
+	id = models.IntegerField(
+		('Genre ID'),
+		help_text=("Genre id at IGDB"),
+		primary_key=True,
+	)
+
+	name = models.CharField(
+		('Genre name'),
+		help_text=("Genre name"),
+		max_length=100,
+	)
+
+
 
 class IGDBGame(models.Model):
 
@@ -9,14 +26,34 @@ class IGDBGame(models.Model):
 	)
 
 	name = models.CharField(
-		('name'),
-		help_text=("Nome do Jogo"),
+		('Name'),
+		help_text=("Name of game"),
 		max_length=100,
+		null=True
 	)
 
 	hypes = models.IntegerField(
 		('Hypes'),
 		help_text=("Number of access in the game befores its release"),
+		null=True
+	)
+
+	popularity = models.FloatField(
+		('Popularity'),
+		help_text=("Popularity of game"),
+		null=True
+	)
+
+	aggregated_rating = models.FloatField(
+		('Critics Rating'),
+		help_text=("Rating based on external critic scores"),
+		null=True
+	)
+
+	time_to_beat = models.FloatField(
+		('Time To Beat'),
+		help_text=("Avarage time to beat the game"),
+		null=True
 	)
 
 	def __str__(self):

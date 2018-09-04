@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'testeRest.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'steamApiDB',
+        'NAME': 'steamAPIdb',
     }
 }
 
