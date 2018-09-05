@@ -1,4 +1,4 @@
-from .models import IGDBGame, Genre
+from importdata.models import IGDBGame, Genre
 from rest_framework import serializers
 
 
@@ -7,12 +7,16 @@ class IGDBGenreSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = Genre
-		fields = '__all__'
+		fields = ['name']
 
 
 class IGDBGameSerializer(serializers.ModelSerializer):
 
-	genres = IGDBGenreSerializer(read_only=True, many=True)
+	genres = serializers.SlugRelatedField(
+		read_only=True,
+		many=True,
+		slug_field='name'
+	)
 
 	class Meta:
 

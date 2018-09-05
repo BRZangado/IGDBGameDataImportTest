@@ -15,6 +15,13 @@ class Genre(models.Model):
 		max_length=100,
 	)
 
+	def __str__(self):
+	    """
+	    Returns the object as a string, the attribute that will represent
+	    the object.
+	    """
+
+	    return self.name
 
 
 class IGDBGame(models.Model):
@@ -56,7 +63,10 @@ class IGDBGame(models.Model):
 		null=True
 	)
 
-	genres = models.ManyToManyField(Genre)
+	genres = models.ManyToManyField(
+		Genre,
+		blank=True
+	)
 
 	def __str__(self):
 	    """
