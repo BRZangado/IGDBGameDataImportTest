@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import IGDBGame, Genre
+from .serializers import IGDBGameSerializer
 
 
 class IgDBView(APIView):
@@ -26,9 +27,7 @@ class IgDBView(APIView):
         for game_dict in ndata:
 
             filtered_data = self.filter_data(game_dict)
-            genres = self.get_genres(game_dict['genres'])
-
-            self.save_games(filtered_data, genres)
+            self.save_games(filtered_data)
 
         for game in IGDBGame.objects.all():
             print(game.id)
@@ -44,7 +43,7 @@ class IgDBView(APIView):
 
         return Response(data=ndata)
 
-    def save_games(self, game_filtered_data, genres):
+    def save_games(self, game_filtered_data):
 
         new_game = IGDBGame(
             id=game_filtered_data['id'],
@@ -56,6 +55,8 @@ class IgDBView(APIView):
         )
 
         new_game.save()
+
+        genres = self.get_genres(game_filtered_data['genres'])
 
         for genre in genres:
             new_game.genres.add(genre)
@@ -130,7 +131,8 @@ class IgDBView(APIView):
             'hypes': hypes,
             'popularity': popularity,
             'aggregated_rating': aggregated_rating,
-            'time_to_beat': time_to_beat
+            'time_to_beat': time_to_beat,
+            'genres': game_dict['genres']
         }
 
         return filtered_data
