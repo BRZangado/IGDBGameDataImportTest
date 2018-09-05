@@ -63,6 +63,23 @@ class IgDBView(APIView):
 
         return Response(data=ndata)
 
+    def get_genre_names(self, genre_id_list):
+
+        genres_names = []
+
+        for id in genre_id_list:
+
+            header = {'user-key': '9c3039ea4ad4cb83bfb126100764c483',
+                          'Accept': 'application/json'
+                }
+            url = 'https://api-endpoint.igdb.com/genres/{}?fields=name'.format(id)
+            data = requests.get(url, headers=header)
+            ndata = data.json()
+
+            genres_names.append(ndata[0]['name'])
+
+        return genres_names
+
     def filter_data(self, game_dict):
 
         if 'id' in game_dict:

@@ -56,6 +56,8 @@ class IGDBGame(models.Model):
 		null=True
 	)
 
+	genres = models.ManyToManyField(Genre)
+
 	def __str__(self):
 	    """
 	    Returns the object as a string, the attribute that will represent
