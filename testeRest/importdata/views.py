@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import IGDBGame, Genre
-from .serializers import IGDBGameSerializer, IGDBGenreSerializer
 
 
 class IgDBView(APIView):
