@@ -2,6 +2,7 @@ import requests
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import routers, serializers, viewsets
 
 from .models import IGDBGame, Genre
 from .serializers import IGDBGameSerializer
@@ -13,7 +14,6 @@ class IgDBView(APIView):
             View that calls IGDB API
             and return some relevant
             information about a game
-            and filter for Null value
     '''
 
     def get(self, request, format=None):
@@ -39,9 +39,8 @@ class IgDBView(APIView):
             for genre in game.genres.all():
                 print(genre)
 
-        IGDBGame.objects.all().delete()
-
         return Response(data=ndata)
+
 
     def save_games(self, game_filtered_data):
 
