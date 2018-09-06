@@ -63,6 +63,10 @@ class IGDBGame(models.Model):
 		null=True
 	)
 
+	external = models.IntegerField(
+		('Steam ID'),
+	)
+
 	genres = models.ManyToManyField(
 		Genre,
 		blank=True
